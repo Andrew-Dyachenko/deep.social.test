@@ -1,0 +1,15 @@
+node_modules/
+.ideas/
+dist/
+pages/
+
+assets/images/favicon/*
+!assets/images/favicon/favicon--dev.svg
+!assets/images/favicon/favicon--prod.svg
+
+assets/fonts/custom-font/
+assets/templates/favicon.pug
+
+# .sass-lint.yml - генерируется автоматически
+.sass-lint.yml
+faviconData.json

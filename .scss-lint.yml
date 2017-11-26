@@ -1,0 +1,254 @@
+# Default application configuration that all configurations inherit from.
+# https://github.com/brigade/scss-lint/blob/master/lib/scss_lint/linter/README.md
+
+scss_files: "**/*.scss"
+plugin_directories: ['.scss-linters']
+
+# List of gem names to load custom linters from (make sure they are already
+# installed)
+plugin_gems: []
+
+linters:
+  BangFormat:                           # Проверка интервала до и после декларации. Пример: !default, !important | Checks spacing of ! declarations, like !important and !default
+    enabled: true
+    space_before_bang: true             # Интервал до объявления декларации | Space before declaration
+    space_after_bang: false             # Интервал после объявления декларации | Space after declaration
+
+  BemDepth:                             # Проверяет количество элементов в классе. Пример: .block__element => Верно, .block__element__subelement => Неверно. | Reports when a BEM selector contains more elements than a configurable maximum number.
+    enabled: true
+    max_elements: 1                     # Максимальное количество элементов | Max elements length
+
+  BorderZero:                           # Предпочтение между 'zero' (0) или 'none'. Пример: border: none или border: 0. Верным считается выбраный вариант в свойстве convention. | You can specify preferring border: none over border: 0 by setting the convention option.
+    enabled: true
+    convention: none                    # Варианты: 'none' или 'zero' (0). | Variants: 'none' or 'zero' (0)
+
+  ColorKeyword:                         # Использовать только шестнадцатеричный код цвета, не разрешать использование литералов цвета как название. Пример: #00ff00 (зелёный) - шестнадцатеричный, green (зелёный) - цвет как название. | Prefer hexadecimal color codes over color keywords.
+    enabled: true
+
+  ColorVariable:                        # Использование литералов цвета только ввиде переменных. Пример: $body-color: #0f0; | Prefer color literals (keywords or hexadecimal codes) to be used only in variable declarations.
+    enabled: true
+
+  Comment:                              # Запретить использование комментариев /* ... */ отображаемых в конечном файле CSS. | comments should be preferred as they don't get rendered in the final generated CSS, whereas /* ... */ comments do.
+    enabled: true
+
+  DebugStatement:                       # Сообщать о @debug инструкция которые вы возможно оставили где-то позади. | Reports @debug statements (which you probably left behind accidentally).
+    enabled: true
+
+  DeclarationOrder:                     # Сначала должны следовать декларации на примере @extend, @include, и только потом основные стили для данного класса/элемента и т.д. с его описываемыми стилями. | Rule sets should be ordered as follows: @extend declarations, @include declarations without inner @content, properties, @include declarations with inner @content, then nested rule sets.
+    enabled: true
+
+  DisableLinterReason:                  # Умная настройка которая отлавливает CSS свойства, которые были запрещены или отключены в scss lint Ииии оставленные без раширенного комментария, почему данныая настройка была отключена. (Лучше не включать =). | scss-lint:disable control comments should be preceded by a comment explaining why these linters are being disabled for this file.
+    enabled: false
+
+  DuplicateProperty:                    # Сообщать если одно и то же своиство было использованно дважды. Например: margin: 10px 0 0;, margin-top: 0.
+    enabled: false
+
+  ElsePlacement:                        # Размещать "} @else {" на той же линии, что и предыдущая фигурная скобка или с новой строчки. | Place @else statements on the same line as the preceding curly brace.
+    enabled: true
+    style: new_line                     # Варианты: 'same_line' или 'new_line'. | Variants: 'same_line' or 'new_line'. 
+
+  EmptyLineBetweenBlocks:               # Обязательный пустой отступ после основных стилей в блоке и перед началом нового вложенного блока. | Separate rule, function, and mixin declarations with empty lines.
+    enabled: false
+    ignore_single_line_blocks: true     # Игнорировать если стили написаны в одну строку. Например: '.icon-chevron-up    { &:before { content: "\e030"; } }' | By default, this will ignore single line blocks, so you can write: '.icon-chevron-up    { &:before { content: "\e030"; } }'
+
+  EmptyRule:                            # Сообщать если стилевой блок пуст. | Reports when you have an empty rule set.
+    enabled: true
+
+  ExtendDirective:                      # Сообщать о наличии директивы @extend. | Reports when you have an @extend directive.
+    enabled: false
+
+  FinalNewline:                         # Завершение файла с новой строки (улучшает сравнение в SCM). | Files should always have a final newline. This results in better diffs when adding lines to the file, since SCM systems such as git won't think that you touched the last line.
+    enabled: true
+    present: true                       # Завершать файл с новой строки? | Whether a final newline should be present.
+
+  HexLength:                            # Предпочтение между полным шестнадцатеричным кодом цвета и его коротким видом записи. Пример: #ff22ee или '#f2e'. | You can specify whether you prefer shorthand or long-form hexadecimal colors by setting the style option to short or long, respectively.
+    enabled: true
+    style: short                        # Варианты: 'short' или 'long'. | Variants: 'short' or 'long'. 
+
+  HexNotation:                          # Предпочтение между записью HEX значений в верхнем или нижнем регистре. | Checks if hexadecimal colors are written in lowercase. You can specify which case with the style option.
+    enabled: true
+    style: lowercase                    # Варианты: 'lowercase' или 'uppercase'. | Variants: 'lowercase' or 'uppercase'. 
+
+  HexValidation:                        # Валидация HEX значений проверяет наличие трех или шести символов в литерале значения. | Ensure hexadecimal colors are valid (either three or six digits).
+    enabled: true
+
+  IdSelector:                           # Избегать использования id селекторов. | Avoid using ID selectors.
+    enabled: true
+
+  ImportantRule:                        # Избегать использования !important в свойствах. Свойство ломает естественный поток каскада. | Avoid using !important in properties. It is usually indicative of a misunderstanding of CSS specificity and can lead to brittle code.
+    enabled: true
+
+  ImportPath:                           # Правила написания базовых имен в директиве @import. | The basenames rules of @import directive.
+    enabled: false
+    leading_underscore: false           # Разрешать использование нижнего подчеркивания в именах подключаемых файлов. | File names should not begin with an underscore.
+    filename_extension: false           # Разрешать использование типов расширений в именах подключаемых файлов. | File names should not include the filename extension
+
+  Indentation:                          # Правила отступов
+    enabled: true
+    allow_non_nested_indentation: false # Разрешить произвольное использование отступов для блоков которые на самом деле не вложены в другие блоки | Whether non-nested rule sets can be arbitrarily indented (default false)
+    character: tab                      # Варианты: | Variants: 'space' или 'tab'.
+    width: tab                          # Количество символов за одит ход. | Number of characters per indentation level.
+
+  LeadingZero:                          # Ноль в начале дробных чисел. Пример: margin: 0.5em или margin: .5em. | Leading zeros for numeric values with a decimal point.
+    enabled: true
+    style: exclude_zero                 # Варианты: 'exclude_zero' (Иссключит ноль) или 'include_zero' (Включить ноль) | Variants: 'exclude_zero' or 'include_zero'
+
+  MergeableSelector:                    # Сообщать если один и тот же селектор определен дважды в одной таблице. | Reports when you define the same selector twice in a single sheet.
+    enabled: true
+    force_nesting: true                 # Убедитесь в том, наборы правил, которые могут быть вложенными вложены. | Ensure rule sets which can be nested are nested
+    whitelist: []                       # Список селекторов исключений. | List of exception selectors.
+
+  NameFormat:                           # Формат записи имен функций, переменных, миксинов и плэйсхолдеров
+    enabled: true
+    allow_leading_underscore: true      # Разрешить использование нижнего подчеркивания в начале имен. | Allow leading underscore.
+    convention: hyphenated_lowercase    # 'camel_case', or 'snake_case', 'hyphenated_lowercase', or a regex pattern
+
+  NestingDepth:                         # Ограничение вложенности селекторов. | Avoid nesting selectors too deeply.
+    enabled: false
+    max_depth: 3                        # Максимальная вложенность. | Avoid nesting selectors too deeply.
+    ignore_parent_selectors: false      # Сообзать об ошибках для родительских селекторов. | Whether to report errors for parent selectors.
+
+  PlaceholderInExtend:                  # Жестко зафиксировать использование директивы @extend только c плейсхолдерами (%), без использования классов (.example-class) - делает код сухим, без дубляжа, но запрещает расширение конкретного класса на месте другим классом со стилями. | Always use placeholder selectors in @extend.
+    enabled: true
+
+  PropertyCount:                        # Лимитировать количество свойств в блоке (жесть но впринципе может пригодится для проведения каких-нибудь созтязаний). | Limit the number of properties in a rule set.
+    enabled: false
+    include_nested: false               # Учитывать свойства находящиеся во вложенных блоках. | Whether to include the properties in nested rule sets in the count.
+    max_properties: 10                  # Максимальное число свойств количества в блоке. | Maximum number of properties.
+
+  PropertySortOrder:                    # Строгая сортировка свойств в блоке. (ИМХО пойдет для сорвнований но не для повседневного использования). | Sort properties in a strict order. By default, will require properties be sorted in alphabetical order, as it's brain dead simple (highlight lines and execute :sort in vim), and it can benefit gzip compression.
+    enabled: false
+    ignore_unspecified: true            # Игнорировать неизвестные, нестандартные свойства. | Whether to ignore properties that are not explicitly specified in order
+    min_properties: 2                   # Минимальное количество свойств в блоке использующие разделение для визуального оформления на группы. | Minimum number of sortable properties (i.e. properties which are defined by the given order) present in the rule set before linting takes place.
+    separate_groups: false              # Должны ли выполняться пробелы между группами свойств. | Whether gaps between groups of properties should be enforced.
+
+  PropertySpelling:                     # Сообщать если используется неизвестное или недействительное свойство CSS или просто свойство с ошибкой в названии, за исключением свойств с префиксами. Например: Неверно: diplay: none; Верно: display: none; | Reports when you use an unknown or disabled CSS property (ignoring vendor-prefixed properties).
+    enabled: true
+    extra_properties: []                # Свойства иссключения, разрешенные к использованию. | List of extra properties to allow.
+    disabled_properties: [              # Свойства запрещенные к использованию. | Properties are forbidden to use.
+      'all',
+      'transition: all',
+      'transition-property: all'
+    ]
+
+  PropertyUnits:                        # Настройка единиц, которые разрешены для значений свойств. | Configure which units are allowed for property values.
+    enabled: true
+    global: [
+      'ch', 'em', 'ex', 'rem',                           # Font-relative lengths
+      'cm', 'in', 'mm', 'pc', 'pt', 'px', 'q',           # Absolute lengths
+      'vh', 'vw', 'vmin', 'vmax',                        # Viewport-percentage lengths
+      'deg', 'grad', 'rad', 'turn',                      # Angle
+      'ms', 's',                                         # Duration
+      'Hz', 'kHz',                                       # Frequency
+      'dpi', 'dpcm', 'dppx',                             # Resolution
+      '%']                                               # Other
+    properties: {}                      # Хеш имен свойств и их список разрешенных единиц. (Тонкая настройка, по типу ключ-значения). | Hash of property names and their list of allowed units. (empty by default)
+
+  QualifyingElement:                    # Избегать квалифицированные (очевидные) элементы в селекторах. Пример: Плохо: [div#thing, ul.list, ul li.item, a[href="place"]] Хорошо: [#thing, .list, ul .item, [href="place"]]. | Avoid qualifying elements in selectors (also known as "tag-qualifying").
+    enabled: true
+    allow_element_with_attribute: false # Разрешить элементы квалифицироваться атрибутами | Allow elements to qualify attributes (default false)
+    allow_element_with_class: false     # Разрешить элементы квалифицироваться классы | Allow elements to qualify classes (default false)
+    allow_element_with_id: false        # Разрешить элементы квалифицироваться идентификаторы | Allow elements to qualify ids (default false)
+
+  SelectorDepth:                        # Общая глубина селекторов. Примерно то же что и NestingDepth, только учитывается инлайновая и неинлайновая вложенность одновременно. | Don't write selectors with a depth of applicability greater than 'max_depth'
+    enabled: true
+    max_depth: 5                        # Максимальная вложенность. | Avoid nesting selectors too deeply.
+
+  SelectorFormat:                       # Стиль составления имен селекторов. | It is good practice to choose a convention for naming selectors.
+    enabled: true
+    convention: hyphenated_BEM          # Названия стилей составления имен селекторов. (hyphenated_BEM - БЭМ + дефисы) | or 'strict_BEM', or 'hyphenated_BEM', or 'snake_case', or 'camel_case', or a regex pattern
+    convention_explanation:             # Отлавливает все ошибки в составлении имен (при включенной настройке - DisableLinterReason) где для такой ошибки отсутствует описание, зачем так было сделано, и полезно в том случае если нет желания описывать каждую из таких ошибок. Описывает все разом. | Custom catch-all explanation if you do not want to use the built-in explanations.
+    ignored_names: []                   # Список имен иссключений из правил. | Array of whitelisted names to not report lints for.
+    ignored_types: []                   # Список селекторов иссключений из правил. | Array containing list of types of selectors to ignore (valid values are attribute, class, element, id, placeholder).
+
+  Shorthand:                            # Предпочитение кратчайший возможной сокращенной форме для свойств, которые поддерживают его. Пример: Плохо: margin: 1px 1px 1px 1px; Хорошо: margin: 1px; | Prefer the shortest shorthand form possible for properties that support it.
+    enabled: true
+    allowed_shorthands: [1, 2, 3]       # Формат максимального сокращения. | Array of allowed shorthand lengths
+
+  SingleLinePerProperty:                # Расстановка свойств построчно. | Properties within rule sets should each reside on their own line.
+    enabled: true
+    allow_single_line_rule_sets: true   # Разрешить расположение свойств в одну строчку. | Allow single line rule sets.
+
+  SingleLinePerSelector:                # Разбивать селекторы на отдельные строки после каждой запятой, таким образом что бы каждый отдельный селектор занимал одну строку и был отделен запятой от новой строки. | Split selectors onto separate lines after each comma, and have each individual selector occupy a single line.
+    enabled: true
+
+  SpaceAfterComma:                      # Пробелы после запятой. | Commas in lists should be followed by a space.
+    enabled: false
+    style: no_space                     # Возможные варианты: | Variants: 'one_space', 'no_space', or 'at_least_one_space'
+  
+  SpaceAfterComment:                    # Литералы комментария должны начинатся с пробельного символа. | Comment literals should be followed by a space.
+    enabled: false
+    allow_empty_comments: true
+    style: at_least_one_space           # Возможные варианты: | Variants: 'one_space', 'no_space', or 'at_least_one_space'
+
+  SpaceAfterPropertyColon:              # Пробельные символы между двоеточием свойства и его значением. | Properties should be formatted with a single space separating the colon from the property's value.
+    enabled: true
+    style: one_space                    # Возможные варианты: | Variants: 'one_space', 'no_space', 'at_least_one_space', or 'aligned'
+
+  SpaceAfterPropertyName:               # Пробельные символы между названием свойства и его двоеточием. | Properties should be formatted with no space between the name and the colon.
+    enabled: true
+    style: no_space                     # Возможные варианты: | Variants: 'one_space', 'no_space', 'at_least_one_space', or 'one_space_or_newline'
+  
+  SpaceAfterVariableColon:              # Пробельные символы между двоеточием объявленной переменной и её значением. | Variables should be formatted with a single space separating the colon from the variable's value.
+    enabled: true
+    style: one_space                    # Возможные варианты: | Variants: 'one_space', 'no_space', 'at_least_one_space', 'one_space_or_newline'.
+
+  SpaceAfterVariableName:               # Пробельные символы между именем объявленной переменной и её двоеточием. (Да или нет - без вариантов.) | Variables should be formatted with no space between the name and the colon.
+    enabled: true
+
+  SpaceAroundOperator:                  # Пробельные символы между операторами. Например операторы: (+, -, *, /, %, ==, !=, >, >=, <, and <=). | Operators should be formatted with a single space on both sides of an infix operator. These include +, -, *, /, %, ==, !=, >, >=, <, and <=.
+    enabled: true
+    style: at_least_one_space           # Возможные варианты: | Variants: 'one_space', 'at_least_one_space', 'no_space'
+
+  SpaceBeforeBrace:                     # Пробельные символы между селектором и фигурной скобкой. | Opening braces should be preceded by a single space.
+    enabled: true
+    style: space                        # Возможные варианты: | Variants: 'space', 'new_line'
+    allow_single_line_padding: true     # Разрешить блокам оформленными в одну строку иметь больше пробелов для более красивого форматирования. | Allow single line blocks to have extra spaces for nicer formatting.
+
+  SpaceBetweenParens:                   # Пробелы между круглыми скобками и их значениями. | Parentheses should not be padded with spaces.
+    enabled: true
+    spaces: 0                           # Количество пробелов. | Spaces to require between parentheses.
+
+  StringQuotes:                         # Кавычки. | String quotes
+    enabled: true
+    style: single_quotes                # Возможные варианты: | Variants: 'single_quotes', 'double_quotes'
+
+  TrailingSemicolon:                    # Завершение значений, переменных и директив обязательной точкой с запятой. | Property values; @extend, @include, and @import directives; and variable declarations should always end with a semicolon.
+    enabled: true
+
+  TrailingWhitespace:                   # Сообщать о бессмысленных пустых пробелах. | Reports lines containing trailing whitespace.
+    enabled: true
+
+  TrailingZero:                         # Не использовать бессмысленное нулевое окончание в числах с плавающей точкой. | Don't write trailing zeros for numeric values with a decimal point.
+    enabled: true
+
+  TransitionAll:                        # Запрет использования transition: all. | Don't use the all keyword to specify transition properties.
+    enabled: true
+
+  UnnecessaryMantissa:                  # Запрет использования чисел с плавающей запятой, там, где числа натуральные (целые, не дробные). Например: Плохо: margin: 1.0em; Хорошо: margin: 1em; | Numeric values should not contain unnecessary fractional portions.
+    enabled: true
+
+  UnnecessaryParentReference:           # Не использовать родительские ссылки (&) там где можно обойтись и без них. Например: Плохо: '& > .bar {' Хорошо: '> .bar {'. | Do not use parent selector references (&) when they would otherwise be unnecessary.
+    enabled: true
+
+  UrlFormat:                            # URL должен быть валидным и не содержать протоколы и доменные имена. | URLs should be valid and not contain protocols or domain names.
+    enabled: false
+
+  UrlQuotes:                            # URL должен быть заключен в кавычки. | URLs should always be enclosed within quotes.
+    enabled: false
+
+  VariableForProperty:                  # Переменные вместо свойств (Для маньяков). | Properties, like color and font, are easier to read and maintain when defined using variables rather than literals.
+    enabled: false
+    properties: []                      # Список свойств для проверки. | Array of property names to check.
+
+  VendorPrefix:
+    enabled: false                      # Запрет вендорных префиксов, вместо этого можно использовать Autofrefixer, но как быть если нужны фильтры или спец.свойства или свойства только для конкретных браузеров? (Не включаем!). | Avoid vendor prefixes. That is, don't write them yourself.
+    identifier_list: base               # Встроенный список свойств. Возможные варианты: | Variants: 'base', 'bourbon'
+    additional_identifiers: []          # Дополнительный список свойств для запрета. | Identifiers to lint, in addition to the identifier_list.
+    excluded_identifiers: []            # Дополнительный список иссключений из правила. | Identifers in the identifier_list and additional_identifiers to exclude from linting.
+
+  ZeroUnit:                             # Опускать единицы измерения для нулевых значений. Например: Плохо: margin: 0px; Хорошо: margin: 0; | Omit length units on zero values.
+    enabled: true
+
+  Compass::*:                           # Активировать компас если конечно он подключен. (Отдается предпочтение миксинам компаса) | Prefer Compass mixins for properties when they exist.
+    enabled: false
