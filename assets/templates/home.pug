@@ -1,0 +1,107 @@
+-
+	var countries = {
+		'Russia': {
+			'Percent': '12.5%',
+			'Followers': '12,000,000',
+			'Engagements': '12,000,000'
+		}
+	};
+
+block home
+	.container.index__container
+		h1.title.index__title LOCATION BY COUNTRY
+		.table.index__table
+			.thead
+				.tr
+					.th Category
+					.th Criteria
+					.th Percent
+					.th Followers
+					.th Engagements
+
+			.tbody
+				each _ in Array(12)
+					each country, countries__key in countries
+						.tr
+							.td Location: by Country
+							.td= countries__key
+							each country__val, country__key in country
+								.td= country__val
+
+		.page-block.page-block--exclusive
+			.row
+				.col-6
+					.form-group
+						label(for='audience')
+							span.fa.fa-users(aria-hidden='true')
+							span.label-text Audience
+							a.fa.fa-question-circle-o(href='#' aria-hidden='true')
+
+						input#audience.form-control(type='text' placeholder='Add interest')
+
+					.form-group
+						.attr
+							.attr__row
+								.attr__close
+									a.fa.fa-times-circle(href='#' aria-hidden='true')
+
+								.attr__label Russian
+								.attr__option
+									select.attr__select
+										option(value='2' selected) &gt;2%
+										option(value='5') &gt;5%
+										option(value='50') &gt;50%
+
+					.form-group
+						.attr
+							.attr__row
+								.attr__close
+									a.fa.fa-times-circle(href='#' aria-hidden='true')
+
+								.attr__label Long location nationality
+								.attr__option
+									select.attr__select
+										option(value='2') &gt;2%
+										option(value='5' selected) &gt;5%
+										option(value='50') &gt;50%
+
+				.col-6
+					.form-group
+						label(for='influencer')
+							span.fa.fa-bullhorn(aria-hidden='true')
+							span.label-text Influencer
+							a.fa.fa-question-circle-o(href='#' aria-hidden='true')
+
+						input#influencer.form-control(type='text' placeholder='Add interest')
+
+					.form-group
+						.attr
+							.attr__row
+								.attr__close
+									a.fa.fa-times-circle(href='#' aria-hidden='true')
+
+								.attr__label Russian
+								.attr__option
+									select.attr__select
+										option(value='2' selected) &gt;2%
+										option(value='5') &gt;5%
+										option(value='50') &gt;50%
+
+					.form-group
+						.attr
+							.attr__row
+								.attr__close
+									a.fa.fa-times-circle(href='#' aria-hidden='true')
+
+								.attr__label Long location nationality
+								.attr__option
+									select.attr__select
+										option(value='2') &gt;2%
+										option(value='5' selected) &gt;5%
+										option(value='50') &gt;50%
+
+		.form-group.form-group--example
+			select.attr__select.attr__select--example
+				option(value='2' selected) &gt;2%
+				option(value='5') &gt;5%
+				option(value='50') &gt;50%

@@ -1,0 +1,231 @@
+@import 'configs/_config'
+@import 'functions/_functions'
+@import 'mixins/_reboot'
+@import 'mixins/_placeholder'
+
+html
+	font-size: $fz-root
+	height: 100%
+
+body
+	font-family: 'Roboto', sans-serif
+	color: $body-color
+	font-size: .875rem
+	background-color: $body-bg
+	height: 100%
+
+*
+	box-sizing: border-box
+
+.container
+	max-width: 960px
+	margin: 0 auto
+	padding: 0 12px
+	background-color: $white
+	height: 100%
+
+.tr
+	display: flex
+	align-items: center
+	justify-content: space-between
+
+.th
+	color: lighten($body-color, $fibo-asymp-xxxl-percentage)
+	font-size: .75rem
+	padding: 8px 0
+
+.th,
+.td
+	text-align: center
+	flex-shrink: 0
+	flex-grow: 1
+	width: 20%
+
+	&:first-child
+		text-align: left
+
+	&:last-child
+		text-align: right
+
+.thead
+	border-bottom: 2px solid lighten(lighten($body-color, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage)
+
+.tbody
+	.tr
+		& ~ .tr
+			border-top: 1px solid lighten(lighten($body-color, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage)
+
+		&:last-child
+			border-bottom: 1px solid lighten(lighten($body-color, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage)
+
+	.td
+		padding: 7px 0
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6
+	text-align: center
+	margin: 0
+	letter-spacing: -.3333px
+
+h1
+	font-size: 1.875rem
+
+input
+	+placeholder(lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage))
+	padding: 3px 11px
+	height: 34px
+	border-radius: 5px
+	border: 1px solid lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage)
+
+.row
+	&:not(:empty)
+		margin: 0 -20px
+
+[class^='col-']
+	float: left
+	padding: 0 20px
+
+.col-6
+	width: 50%
+
+.form-group
+	input
+		width: 100%
+
+	label
+		display: block
+		font-weight: bold
+		font-size: 16px
+		margin-bottom: 13px
+
+		.fa
+			font-size: 16px
+			color: lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-l-percentage)
+
+			&[class*='fa-question']
+				font-size: 20px
+				text-decoration: none
+
+		> *
+			&:not(script)
+				vertical-align: middle
+
+				& ~ *
+					&:not(script)
+						margin-left: 8px
+
+	&--example
+		display: inline-block
+		vertical-align: top
+		@media (min-width: 960px)
+			margin-left: 164px
+
+.label-text
+	display: inline-block
+
+.index
+	height: 100%
+
+.index__title
+	margin-bottom: 40px
+
+.index__table
+	margin-bottom: 50px
+
+.index__container
+	height: 100%
+	padding-top: 20px
+
+.page-block
+	+clearfix
+	display: inline-block
+	background-color: $white
+	border-radius: 5px
+	box-shadow: 0 2px 15px 0 fade-out($black, $fibo-asymp-xxxl + $fibo-asymp-xl)
+	border: 1px solid lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage)
+	padding: 16px 20px
+
+	&--exclusive
+		max-width: 542px
+
+	.form-group
+		& ~ .form-group
+			margin-top: 10px
+
+.attr
+	&__row
+		display: flex
+		justify-content: space-between
+		align-items: center
+		margin: 0 -4px
+
+		> *
+			&:not(script)
+				padding: 0 4px
+
+	&__close
+		font-size: 20px
+		color: $blue
+
+		.fa
+			text-decoration: none
+			color: $blue
+
+	&__label
+		overflow: hidden
+		white-space: nowrap
+		text-overflow: ellipsis
+		flex-grow: 1
+
+	&__select
+		float: right
+		min-width: 68px
+
+// Select2 plugin
+
+.select2-container--default
+	.select2-selection--single
+		border-color: lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage)
+
+		.select2-selection__arrow
+			height: 32px
+			b
+				border-width: 6px 5px 0
+				border-top-color: lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage)
+
+				&::before
+					content: ''
+					position: absolute
+					border-width: 5px 4px 0
+					border-color: $white transparent transparent
+					border-style: solid
+					left: 50%
+					top: 50%
+					margin-top: -6px
+					margin-left: -4px
+
+		.select2-selection__rendered
+			line-height: 32px
+
+	&.select2-container--open
+		.select2-selection--single
+			.select2-selection__arrow
+				b
+					border-width: 0 5px 6px
+					border-bottom-color: lighten(lighten($black, $fibo-asymp-xxxl-percentage), $fibo-asymp-xl-percentage + $fibo-asymp-l-percentage)
+
+					&::before
+						border-width: 0 4px 5px
+						border-color: transparent transparent $white
+						margin-top: 1px
+
+.select2-container
+	.select2-selection--single
+		height: 34px
+
+.select2-dropdown
+	box-shadow: 0 2px 15px 0 fade-out($black, $fibo-asymp-xxxl + $fibo-asymp-xl)

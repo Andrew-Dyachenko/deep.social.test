@@ -1,0 +1,35 @@
+@import '../functions/_functions'
+
+// ---------- Asymptotic Fibonacci numbers  ----------
+
+$fibonacci-number: 1.61803398875
+$fibo-asymp-xxxl: number(str-replace(#{$fibonacci-number - 1 / 1}, '-', '')) // 0.61803398875
+$fibo-asymp-xxl: number(str-replace(#{$fibonacci-number - 2 / 1}, '-', '')) // 0.381966011
+$fibo-asymp-xl: number(str-replace(#{$fibonacci-number - 3 / 2}, '-', '')) // 0.118033989
+$fibo-asymp-l: number(str-replace(#{$fibonacci-number - 5 / 3}, '-', '')) // 0.048632678
+$fibo-asymp-m: number(str-replace(#{$fibonacci-number - 8 / 5}, '-', '')) // 0.018033989
+$fibo-asymp-s: number(str-replace(#{$fibonacci-number - 13 / 8}, '-', '')) // 0.006966011
+$fibo-asymp-xs: number(str-replace(#{$fibonacci-number - 21 / 13}, '-', '')) // 0.002649373
+$fibo-asymp-xxs: number(str-replace(#{$fibonacci-number - 34 / 21}, '-', '')) // 0.00101363
+$fibo-asymp-xxxs: number(str-replace(#{$fibonacci-number - 55 / 34}, '-', '')) // 0.00038693
+
+// ---------- Asymptotic Fibonacci percentage  ----------
+
+$fibo-asymp-xxxl-percentage: $fibo-asymp-xxxl * 100% // 61.803398875%
+$fibo-asymp-xxl-percentage: $fibo-asymp-xxl * 100% // 38.1966011%
+$fibo-asymp-xl-percentage: $fibo-asymp-xl * 100% // 11.8033989%
+$fibo-asymp-l-percentage: $fibo-asymp-l * 100% // 4.8632678%
+$fibo-asymp-m-percentage: $fibo-asymp-m * 100% // 1.8033989%
+$fibo-asymp-s-percentage: $fibo-asymp-s * 100% // 0.6966011%
+$fibo-asymp-xs-percentage: $fibo-asymp-xs * 100% // 0.2649373%
+$fibo-asymp-xxs-percentage: $fibo-asymp-xxs * 100% // 0.101363%
+$fibo-asymp-xxxs-percentage: $fibo-asymp-xxxs * 100% // 0.038693%
+
+$fz-root: 16px
+
+$black: #000
+$white: invert($black)
+$blue: #298ff0
+
+$body-color: lighten($black, $fibo-asymp-xl-percentage)
+$body-bg: $white

@@ -1,4 +1,8 @@
-import greet from './greeter.js';
+'use strict';
 
-console.log("I'm the entry point");
-greet();
+jQuery(document).ready(function () {
+    jQuery('.attr__select').select2({
+        minimumResultsForSearch: Infinity
+    });
+    jQuery('.attr__select--example').select2('open');
+});
