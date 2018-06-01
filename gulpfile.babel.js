@@ -10,9 +10,10 @@ import fs                  from 'file-system';
 import makeSassLintConfig  from 'make-sass-lint-config';
 import jsyaml              from 'js-yaml';
 import magicImporter       from 'node-sass-magic-importer';
-import nodeResolve         from 'rollup-plugin-node-resolve-auto';
+import nodeResolve         from 'rollup-plugin-node-resolve';
 import rollupPluginReplace from 'rollup-plugin-replace';
 import rollupPluginAlias   from 'rollup-plugin-alias';
+import spriteSmith         from 'gulp.spritesmith';
 
 gulp.signature = function (date) { // Подпись. | Signature.
 	const banner = `
@@ -43,8 +44,8 @@ gulp.signature = function (date) { // Подпись. | Signature.
 var mode = 'dev',
 	FAVICON_DATA_FILE = 'faviconData.json', // Список разположений всех генерируемых файлов - фавиконов | List of the locations of all the generated files - favicon
 	configs = {},
-	taskList = [cleanBase, 'favicon', templates, htmlBeautify, htmlLint, 'sassGroup', 'jsGroup', /*banner, */'copy', server, watch, faviconUpdate], // Списки рабочих режимов | Lists of operating modes
-	fastList = [cleanBase, templates, htmlBeautify, htmlLint, 'sassGroup', 'jsGroup', /*banner, */'copy', server, watch],
+	prodList = [cleanBase, 'favicon', templates, htmlBeautify, htmlLint, 'iconFontGroup', 'sassGroup', 'jsGroup', imageMin, 'copy', banner, server, watch, faviconUpdate],
+	fastList = [cleanBase, templates, htmlBeautify, htmlLint, 'iconFontGroup', 'sassGroup', 'jsGroup', imageMin, 'copy', banner, server, watch],
 	plugins = gulpLoadPlugins({
 		rename: {
 			'gulp-uglify-es':          'uglify',
@@ -69,20 +70,21 @@ configs.prod = 'prod';
 configs.dev = 'dev';
 configs.assets = 'assets/';
 configs.dist = 'dist/';
-configs.realURL = 'https://deep.social.esy.es';
+configs.realURL = 'https://deep-social-test.000webhostapp.com/';
 configs.favicon = {
 	assets:     configs.assets  + 'images/favicon/',
 	dist:       configs.dist    + 'images/favicon/',
 	name:       'favicon',
-	postfix:	'--dev',
+	// prefix:     'master-',
 	ext:        'png',
+	separator:  '--',
 	settings: {
 		scalingAlgorithm: 'Mitchell',
 		errorOnImageTooSmall: false
 	}
 };
 
-configs.server    = {
+configs.server = {
 	// proxy: configs.localURL,
 	open: false,
 	reloadOnRestart: true,
@@ -155,7 +157,8 @@ configs.sass = {
 	dist:   configs.dist    + 'css/',
 	ext:    's+(a|c)ss',
 	files: [
-		'bundle'
+		'bundle',
+		'noscript'
 	],
 	exceptions: [],
 	options: {
@@ -192,7 +195,9 @@ configs.sassLint = {
 	assets:     configs.sass.assets,
 	ext:        configs.sass.ext,
 	exceptions: [
+		'sprite.*',
 		'configs/**',
+		'utilities/**',
 		'functions/**'
 	],
 	SCSSConfigFile: '.scss-lint.yml',
@@ -307,7 +312,9 @@ configs.banner = {
 		assets: configs.sass.dist,
 		dist: configs.sass.dist,
 		ext: 'css',
-		exceptions: [],
+		exceptions: [
+			'!sprite'
+		],
 		debug: {
 			title: 'Bnr.css задействовал:'
 		}
@@ -333,11 +340,24 @@ configs.templates = {
 			description:    pkg.description,
 			keywords:       pkg.keywords,
 			revisit:        pkg.revisit,
+
+			mode:           mode,
+
+			prod:           configs.prod,
+			dev:            configs.dev,
+			assets:         configs.assets,
+			dist:           configs.dist,
 			cssDist:        configs.sass.dist,
-			jsDist:         configs.js.dist,
+			jsDist:         configs.js.dist
 		}
 	}
 };
+
+// configs.vue = {
+// 	assets: configs.assets + 'components/',
+// 	ext:    'vue',
+// 	dist:   'assets/js/'
+// };
 
 configs.html = {
 	assets: configs.templates.dist,
@@ -425,9 +445,112 @@ configs.images = {
 	}
 };
 
+configs.images.minify = {
+	assets: configs.images.assets,
+	dist:   configs.images.dist,
+	ext:    '**',
+	cached: {
+		name: 'imagesMinify',
+		options: {
+			optimizeMemory: true
+		}
+	}
+};
+
+configs.fonts = {
+	assets: configs.assets  + 'fonts/',
+	dist:   configs.dist    + 'fonts/',
+	ext:    '**'
+};
+
+configs.fonts.custom = {
+	assets:     configs.images.assets + 'custom-font/',
+	dist:       configs.fonts.assets + 'custom-font/',
+	ext:        'svg',
+	name:       'custom-font',
+	formats:    [
+		'ttf',
+		'eot',
+		'woff',
+		'woff2',
+		'svg'
+	]
+};
+
+configs.fonts.iconFontCss = {
+	options: {
+		fontName: 'custom-font',
+		path: 'assets/sass/utilities/_font-icons.scss',
+		targetPath: '../../sass/utilities/_custom-font.scss',
+		fontPath: '../../dist/fonts/custom-font/',
+		cssClass: 'custom-font'
+	}
+};
+
+configs.fonts.iconFont = {
+	options: {
+		fontName: configs.fonts.custom.name,    // Имя шрифта (Обязательный) | Font name (Required)
+		prependUnicode: false,                  // Recommended option 
+		formats: configs.fonts.custom.formats,  // default, 'woff2' and 'svg' are available 
+		timestamp: gulp.signature(Date()),      // recommended to get consistent builds when watching files 
+		appendCodepoints: true,
+		appendUnicode: false,
+		normalize: true,
+		fontHeight: 1000,
+		centerHorizontally: true
+	}
+};
+
+configs.sprite = {
+	assets: configs.images.assets + 'sprite/',
+	ext:    configs.images.ext
+};
+
 configs.images.copy = {};
 configs.images.copy.ext = '**';
-configs.images.copy.exceptions = [];
+configs.images.copy.exceptions = [
+	'!' + configs.sprite.assets.replace(/(?:\/{1})\s*$/gmi, ''),
+	'!' + configs.sprite.assets + configs.images.copy.ext,
+	'!' + configs.fonts.custom.assets.replace(/(?:\/{1})\s*$/gmi, ''),
+	'!' + configs.fonts.custom.assets + configs.images.copy.ext
+];
+
+configs.sprite = {
+	assets: configs.images.assets + 'sprite/',
+	dist: configs.images.dist + 'sprite/',
+	ext: [
+		'png',
+		'jpg'
+	],
+	debug: {
+		title: 'Sprite задействовал:'
+	}
+};
+
+configs.sprite.options = {
+	imgName: 'sprite.png',
+	cssName: 'sprite.sass',
+	cssVarMap: function (item) {
+		if (item.name.indexOf('--hover') !== -1) {
+			item.name = 'sprite-smith:hover .icon-' + item.name.replace('--hover', '');
+		}
+		else if (item.name.indexOf('--active') !== -1) {
+			item.name = 'sprite-smith:active .icon-' + item.name.replace('--active', '') + ',' + '\n' + 'sprite-smith.active .icon-' + item.name.replace('--active', '');
+		}
+		else if (item.name.indexOf('--focus') !== -1) {
+			item.name = 'sprite-smith:focus .icon-' + item.name.replace('--focus', '');
+		}
+		else if (item.name.indexOf('.active') !== -1) {
+			item.name = 'sprite-smith-active .icon-' + item.name.replace('.active', '');
+		}
+		else {
+			item.name = 'sprite-smith .icon-' + item.name;
+		}
+		return item;
+	}
+};
+
+configs.sprite.options.imgPath = '/' + configs.sprite.dist + configs.sprite.options.imgName;
 
 /*==============================================================
 =            Рабочий интерфейс | Operating interface           =
@@ -435,23 +558,52 @@ configs.images.copy.exceptions = [];
 
 gulp.task('sassGroup', (function () {
 	sassGlobalWatch();
-	return gulp.series(sassConfig, sassLint, sass);
+	return gulp.series(sassConfig, sassLint, sprite, sass);
 })());
 
 gulp.task('jsGroup', (function () {
 	return gulp.series(jshint, rollupJS, fixmyJS, semiJS, jsbeautify, uglify);
 })());
 
+gulp.task('iconFontGroup', (function () {
+	sassGlobalWatch();
+	return gulp.series(/*iconFontFile, */iconFont);
+})());
+
 gulp.task('copy',
-	gulp.series(copyImages/*, copyJS*/));
+	gulp.series(copyFonts, copyImages/*, copyJS*/));
+
+gulp.task(configs.dev, function () {
+	mode = configs.dev;
+	configs.templates.options.locals.mode = mode;
+	return gulp.series(devList)();
+});
+
+gulp.task(configs.prod, function () {
+	mode = configs.prod;
+	configs.templates.options.locals.mode = mode;
+	return gulp.series(prodList)();
+});
 
 gulp.task('favicon', gulp.series(faviconFile, faviconGenerate, faviconInject, faviconClean));
 
 gulp.task('fast', gulp.series(fastList));
 
-gulp.task('default', gulp.series(taskList));
+gulp.task('default', gulp.series(prodList));
 
 /*============================================================*/
+
+function sprite() {
+	return gulp
+		.src((srcCollection)(configs.sprite.ext, '', '*.'), {
+			cwd: configs.sprite.assets
+		})
+		.pipe(plugins.debug(configs.sprite.debug))
+		.pipe(spriteSmith(configs.sprite.options))
+
+		.pipe(plugins.if((srcCollection)(configs.sprite.ext, '', '*.'), gulp.dest(configs.sprite.dist)))
+		.pipe(plugins.if(['*.css', '*.' + configs.sass.ext], gulp.dest(configs.sass.assets)));
+}
 
 function srcCollection(ext, exceptions, regexp) {
 	var array = [];
@@ -498,9 +650,9 @@ function faviconFile() { // Генератор файла фавикона. | Fa
 }
 
 function faviconGenerate(done) { // Генератор фавиконов | Favicon generator
-	console.log('Используем: ' + configs.favicon.assets + configs.favicon.name + configs.favicon.postfix + '.' + configs.favicon.ext);
+	console.log('Используем: ' + configs.favicon.assets + configs.favicon.name + configs.favicon.separator + configs[mode] + '.' + configs.favicon.ext);
 	plugins.realFavicon.generateFavicon({
-		masterPicture: configs.favicon.assets + configs.favicon.name + configs.favicon.postfix + '.' + configs.favicon.ext,
+		masterPicture: configs.favicon.assets + configs.favicon.name + configs.favicon.separator + configs[mode] + '.' + configs.favicon.ext,
 		dest: configs.favicon.assets,
 		iconsPath: '/../' + configs.favicon.dist,
 		design: configs.favicon.design,
@@ -647,6 +799,20 @@ function sassConfig() {
 	return plugins.file(configs.sassLint.SASSConfigFile, string, { src: true }).pipe(gulp.dest('./'));
 }
 
+function cssMin() {
+	return gulp
+		.src((srcCollection)(configs.cssMin.ext, configs.cssMin.exceptions, '*.'), {
+			cwd: configs.cssMin.assets
+		})
+		.pipe(plugins.newer('../' + configs.cssMin.dist))
+		.pipe(plugins.debug(configs.cssMin.debug))
+		.pipe(plugins.sourcemaps.init(configs.cssMin.map.init))
+		.pipe(plugins.cssmin())
+		.pipe(plugins.rename(configs.cssMin.rename))
+		.pipe(plugins.sourcemaps.write(configs.cssMin.map.write.path))
+		.pipe(gulp.dest(configs.cssMin.dist));
+}
+
 function jsbeautify() {
 	return gulp
 		.src((srcCollection)(configs.js.jsbeautify.ext, configs.js.jsbeautify.exceptions, '*.'), {
@@ -689,28 +855,25 @@ function rollupJS() {
 			});
 			return arr;
 		})())
-		.pipe(plugins.cached(configs.js.rollup.cached.name, configs.js.rollup.cached.options))
+		// .pipe(plugins.cached(configs.js.rollup.cached.name, configs.js.rollup.cached.options))
 		.pipe(plugins.debug(configs.js.rollup.debug))
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rollup({
 			// any option supported by Rollup can be set here. 
 			allowRealFiles: true,
 			input: ['assets/js/bundle.js'],
-			banner: '/*jshint esversion: 6*/',
-			format: 'es',
+			output: {
+				banner: '/*jshint esversion: 6*/',
+				format: 'es'
+			},
 			plugins: [
 				rollupPluginReplace({
 					'process.env.NODE_ENV': JSON.stringify(mode === configs.prod ? 'production' : 'development')
 				}),
-				nodeResolve({
-					// If you set this to true, then modules will be built in "browser" mode 
-					// based on the presence of the "browser" field in package.json 
-					browser: false,  // Default: false 
-
-					// not all files you want to resolve are .js or .json files 
-					// if you want to support .json, you'll also need rollup-plugin-json 
-					extensions: ['.js', '.json']  // Default: ['.js'] 
-				})
+				rollupPluginAlias({
+					'vue': 'node_modules/vue/dist/vue.esm.js'
+				}),
+				nodeResolve()
 			]
 		}))
 		.pipe(plugins.sourcemaps.write('/'))
@@ -747,6 +910,24 @@ function jshint() {
 		.pipe(plugins.jshint.reporter('default'));
 }
 
+function copyFonts() {
+	return gulp
+		.src(configs.fonts.ext, {
+			cwd: configs.fonts.assets
+		})
+		.pipe(gulp.dest(configs.fonts.dist));
+}
+
+function imageMin() {
+	var src = configs.images.copy.exceptions;
+	src.unshift(configs.images.assets + configs.images.copy.ext);
+	return gulp
+		.src(src)
+		.pipe(plugins.cached(configs.images.minify.cached.name, configs.images.minify.cached.options))
+		.pipe(plugins.imagemin())
+		.pipe(gulp.dest(configs.images.minify.dist));
+}
+
 function copyImages() {
 	var src = configs.images.copy.exceptions;
 	src.unshift(configs.images.assets + configs.images.copy.ext);
@@ -754,6 +935,24 @@ function copyImages() {
 		.src(src)
 		.pipe(plugins.cached(configs.images.cached.name, configs.images.cached.options))
 		.pipe(gulp.dest(configs.images.dist));
+}
+
+/* jshint ignore:start */
+function iconFontFile() {
+	var str = '';
+	return plugins.file(configs.fonts.custom.name + '.scss', str, {
+		src: true
+	})
+		.pipe(gulp.dest(configs.sass.assets));
+}
+/* jshint ignore:end */
+
+function iconFont() {
+	return gulp
+		.src(configs.fonts.custom.assets + '*.' + configs.fonts.custom.ext)
+		.pipe(plugins.iconfontCss(configs.fonts.iconFontCss.options))
+		.pipe(plugins.iconfont(configs.fonts.iconFont.options))
+		.pipe(gulp.dest(configs.fonts.custom.dist));
 }
 
 function banner() {
@@ -821,12 +1020,16 @@ function watch() {
 			return gulp.series(sassLint, sass, banner, browser.reload);
 		})());
 
-	gulp.watch(configs.js.assets + '*.' + configs.js.ext)
-		.on('all', gulp.series('jsGroup', banner, browser.reload));
-
-	gulp.watch(configs.templates.assets + '*.' + configs.templates.ext)
+		gulp.watch(configs.templates.assets + '*.' + configs.templates.ext)
 		.on('all', gulp.series(templates, htmlBeautify, htmlLint, browser.reload));
 
-	gulp.watch([configs.images.assets + '*.' + extImages])
-		.on('all', gulp.series(copyImages, browser.reload));
+	gulp.watch(configs.js.assets + '*.' + configs.js.ext)
+		.on('all', gulp.series('jsGroup', /*copyJS, */banner, browser.reload));
+
+	gulp.watch(configs.fonts.assets + configs.fonts.ext)
+		.on('all', gulp.series(copyFonts, browser.reload));
+
+	gulp.watch([configs.images.assets + '*.' + extImages, configs.sprite.assets + '*.' + extImages.replace(',svg', '')])
+		.on('all', gulp.series(sprite, imageMin, copyImages, 'iconFontGroup', browser.reload));
+
 }
